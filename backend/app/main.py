@@ -1,11 +1,9 @@
-import os
-
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .models import TaskCreate, TaskOut, TaskPriority, TaskStatus, TaskUpdate
-from .storage import get_storage
+from .api.routes import get_router
+from .services.dependencies import get_task_service
 
 load_dotenv()
 
@@ -19,39 +17,5 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-storage = get_storage()
-
-
-@app.get("/tasks", response_model=list[TaskOut])
-async def list_tasks(
-    status: TaskStatus | None = Query(default=None),
-    priority: TaskPriority | None = Query(default=None),
-    subject: str | None = Query(default=None)
-):
-    return storage.list(status=status, priority=priority, subject=subject)
-
-
-@app.post("/tasks", response_model=TaskOut)
-async def create_task(payload: TaskCreate):
-    return storage.create(payload)
-
-
-@app.put("/tasks/{task_id}", response_model=TaskOut)
-async def update_task(task_id: str, payload: TaskUpdate):
-    task = storage.update(task_id, payload)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return task
-
-
-@app.delete("/tasks/{task_id}")
-async def delete_task(task_id: str):
-    removed = storage.delete(task_id)
-    if not removed:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return {"ok": True}
-
-
-@app.get("/summary")
-async def summary():
-    return storage.summary()
+task_service = get_task_service()
+app.include_router(get_router(task_service))
