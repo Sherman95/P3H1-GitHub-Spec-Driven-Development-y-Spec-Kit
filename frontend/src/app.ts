@@ -59,11 +59,13 @@ const refreshTasks = async () => {
 const showApp = () => {
   dom.authSection.classList.add("hidden");
   dom.appSection.classList.remove("hidden");
+  dom.logoutButton.classList.remove("hidden");
 };
 
 const showAuth = () => {
   dom.authSection.classList.remove("hidden");
   dom.appSection.classList.add("hidden");
+  dom.logoutButton.classList.add("hidden");
 };
 
 const getTaskPayload = (): TaskPayload => ({
@@ -102,14 +104,30 @@ const bindEvents = () => {
     applyTheme(state.theme === "dark" ? "light" : "dark");
   });
 
+  dom.logoutButton.addEventListener("click", () => {
+    auth.logout();
+    state.user = null;
+    state.token = "";
+    showAuth();
+    showToast("Sesion cerrada");
+  });
+
   dom.showLogin.addEventListener("click", () => {
     dom.loginForm.classList.remove("hidden");
     dom.registerForm.classList.add("hidden");
+    dom.showLogin.classList.add("bg-white", "shadow-sm", "dark:bg-gray-700", "dark:text-white");
+    dom.showLogin.classList.remove("text-slate-500", "dark:text-gray-400");
+    dom.showRegister.classList.remove("bg-white", "shadow-sm", "dark:bg-gray-700", "dark:text-white");
+    dom.showRegister.classList.add("text-slate-500", "dark:text-gray-400");
   });
 
   dom.showRegister.addEventListener("click", () => {
     dom.registerForm.classList.remove("hidden");
     dom.loginForm.classList.add("hidden");
+    dom.showRegister.classList.add("bg-white", "shadow-sm", "dark:bg-gray-700", "dark:text-white");
+    dom.showRegister.classList.remove("text-slate-500", "dark:text-gray-400");
+    dom.showLogin.classList.remove("bg-white", "shadow-sm", "dark:bg-gray-700", "dark:text-white");
+    dom.showLogin.classList.add("text-slate-500", "dark:text-gray-400");
   });
 
   dom.loginForm.addEventListener("submit", async (event) => {
@@ -146,6 +164,64 @@ const bindEvents = () => {
     }
   });
 
+  const switchScreen = (screen: "dashboard" | "subjects" | "tasks") => {
+    dom.screenDashboard.classList.add("hidden");
+    dom.screenSubjects.classList.add("hidden");
+    dom.screenTasks.classList.add("hidden");
+    const activeClasses = ["active-tab", "bg-slate-100", "text-ink", "dark:bg-gray-800", "dark:text-white"];
+    const inactiveClasses = ["text-slate-500", "dark:text-gray-400"];
+    
+    [dom.navDashboard, dom.navSubjects, dom.navTasks].forEach(btn => {
+      btn.classList.remove(...activeClasses);
+      btn.classList.add(...inactiveClasses);
+    });
+
+    if (screen === "dashboard") {
+      dom.screenDashboard.classList.remove("hidden");
+      dom.navDashboard.classList.add(...activeClasses);
+      dom.navDashboard.classList.remove(...inactiveClasses);
+    } else if (screen === "subjects") {
+      dom.screenSubjects.classList.remove("hidden");
+      dom.navSubjects.classList.add(...activeClasses);
+      dom.navSubjects.classList.remove(...inactiveClasses);
+    } else {
+      dom.screenTasks.classList.remove("hidden");
+      dom.navTasks.classList.add(...activeClasses);
+      dom.navTasks.classList.remove(...inactiveClasses);
+    }
+  };
+
+  dom.navDashboard.addEventListener("click", () => switchScreen("dashboard"));
+  dom.navSubjects.addEventListener("click", () => switchScreen("subjects"));
+  dom.navTasks.addEventListener("click", () => switchScreen("tasks"));
+
+  const openModal = (modal: "subject" | "task") => {
+    if (modal === "subject") dom.modalSubject.classList.remove("hidden");
+    else dom.modalTask.classList.remove("hidden");
+  };
+
+  const closeModal = (modal: "subject" | "task") => {
+    if (modal === "subject") {
+      dom.modalSubject.classList.add("hidden");
+      resetSubjectForm();
+    } else {
+      dom.modalTask.classList.add("hidden");
+      resetTaskForm();
+    }
+  };
+
+  dom.btnNewSubject.addEventListener("click", () => {
+    dom.modalSubjectTitle.textContent = "Nueva Asignatura";
+    openModal("subject");
+  });
+  dom.btnNewTask.addEventListener("click", () => {
+    dom.modalTaskTitle.textContent = "Nueva Tarea";
+    openModal("task");
+  });
+
+  dom.closeModalSubject.addEventListener("click", () => closeModal("subject"));
+  dom.closeModalTask.addEventListener("click", () => closeModal("task"));
+
   dom.subjectReset.addEventListener("click", () => resetSubjectForm());
 
   dom.subjectForm.addEventListener("submit", async (event) => {
@@ -159,7 +235,7 @@ const bindEvents = () => {
       } else {
         await storage.createSubject(payload);
       }
-      resetSubjectForm();
+      closeModal("subject");
       await refreshSubjects();
       showToast("Asignatura guardada");
     } catch {
@@ -175,7 +251,11 @@ const bindEvents = () => {
 
     if (action === "edit") {
       const subject = state.subjects.find((item) => item.id === id);
-      if (subject) fillSubjectForm(subject);
+      if (subject) {
+        fillSubjectForm(subject);
+        dom.modalSubjectTitle.textContent = "Editar Asignatura";
+        openModal("subject");
+      }
       return;
     }
 
@@ -225,7 +305,7 @@ const bindEvents = () => {
       } else {
         await storage.createTask(payload);
       }
-      resetTaskForm();
+      closeModal("task");
       await refreshTasks();
       showToast("Tarea guardada");
     } catch {
@@ -241,7 +321,11 @@ const bindEvents = () => {
 
     if (action === "edit") {
       const task = state.tasks.find((item) => item.id === id);
-      if (task) fillTaskForm(task);
+      if (task) {
+        fillTaskForm(task);
+        dom.modalTaskTitle.textContent = "Editar Tarea";
+        openModal("task");
+      }
       return;
     }
 

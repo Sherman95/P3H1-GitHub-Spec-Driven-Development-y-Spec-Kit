@@ -8,6 +8,26 @@ export const dom = {
   toast: document.getElementById("toast") as HTMLDivElement,
   authSection: document.getElementById("auth-section") as HTMLDivElement,
   appSection: document.getElementById("app-section") as HTMLDivElement,
+  
+  // Navigation & Screens
+  navDashboard: document.getElementById("nav-dashboard") as HTMLButtonElement,
+  navSubjects: document.getElementById("nav-subjects") as HTMLButtonElement,
+  navTasks: document.getElementById("nav-tasks") as HTMLButtonElement,
+  screenDashboard: document.getElementById("screen-dashboard") as HTMLDivElement,
+  screenSubjects: document.getElementById("screen-subjects") as HTMLDivElement,
+  screenTasks: document.getElementById("screen-tasks") as HTMLDivElement,
+  
+  // Modals
+  modalSubject: document.getElementById("modal-subject") as HTMLDivElement,
+  modalTask: document.getElementById("modal-task") as HTMLDivElement,
+  closeModalSubject: document.getElementById("close-modal-subject") as HTMLButtonElement,
+  closeModalTask: document.getElementById("close-modal-task") as HTMLButtonElement,
+  btnNewSubject: document.getElementById("btn-new-subject") as HTMLButtonElement,
+  btnNewTask: document.getElementById("btn-new-task") as HTMLButtonElement,
+  modalSubjectTitle: document.getElementById("modal-subject-title") as HTMLHeadingElement,
+  modalTaskTitle: document.getElementById("modal-task-title") as HTMLHeadingElement,
+
+  logoutButton: document.getElementById("logout-button") as HTMLButtonElement,
   showLogin: document.getElementById("show-login") as HTMLButtonElement,
   showRegister: document.getElementById("show-register") as HTMLButtonElement,
   loginForm: document.getElementById("login-form") as HTMLFormElement,
@@ -92,7 +112,7 @@ export const renderCharts = (tasks: Task[]) => {
           <span class="capitalize">${key.replace("_", " ")}</span>
           <span>${value}</span>
         </div>
-        <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800">
+        <div class="h-2 rounded-full bg-slate-200 dark:bg-gray-700">
           <div class="h-2 rounded-full bg-accent" style="width:${(value / total) * 100}%"></div>
         </div>
       </div>
@@ -108,8 +128,8 @@ export const renderCharts = (tasks: Task[]) => {
           <span class="capitalize">${key}</span>
           <span>${value}</span>
         </div>
-        <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800">
-          <div class="h-2 rounded-full bg-ink" style="width:${(value / total) * 100}%"></div>
+        <div class="h-2 rounded-full bg-slate-200 dark:bg-gray-700">
+          <div class="h-2 rounded-full bg-ink dark:bg-gray-300" style="width:${(value / total) * 100}%"></div>
         </div>
       </div>
     `
@@ -120,24 +140,24 @@ export const renderCharts = (tasks: Task[]) => {
 export const renderSubjects = (subjects: Subject[]) => {
   if (!subjects.length) {
     dom.subjectList.innerHTML =
-      "<div class=\"rounded-xl border border-dashed border-slate/30 p-4 text-center text-slate\">No hay asignaturas registradas.</div>";
+      "<div class=\"rounded-xl border border-dashed border-slate/30 p-4 text-center text-slate dark:text-gray-400\">No hay asignaturas registradas.</div>";
     return;
   }
 
   dom.subjectList.innerHTML = subjects
     .map(
       (subject) => `
-      <div class="flex items-center justify-between rounded-xl border border-slate/10 bg-mist/60 p-3 dark:bg-slate-800">
+      <div class="flex items-center justify-between rounded-xl border border-slate/10 bg-mist/60 p-3 dark:bg-gray-800 dark:border-gray-700">
         <div class="flex items-center gap-3">
           <span class="h-3 w-3 rounded-full" style="background:${subject.color}"></span>
           <div>
             <p class="text-sm font-semibold">${subject.name}</p>
-            <p class="text-xs text-slate-500 dark:text-slate-300">${subject.teacher ?? "Sin docente"}</p>
+            <p class="text-xs text-slate-500 dark:text-gray-400">${subject.teacher ?? "Sin docente"}</p>
           </div>
         </div>
         <div class="flex gap-2 text-xs">
-          <button data-action="edit" data-id="${subject.id}" class="rounded-lg border border-slate/20 px-2 py-1">Editar</button>
-          <button data-action="delete" data-id="${subject.id}" class="rounded-lg bg-ink px-2 py-1 text-white">Eliminar</button>
+          <button data-action="edit" data-id="${subject.id}" class="rounded-lg border border-slate/20 px-2 py-1 dark:border-gray-600">Editar</button>
+          <button data-action="delete" data-id="${subject.id}" class="rounded-lg bg-ink px-2 py-1 text-white dark:bg-gray-700">Eliminar</button>
         </div>
       </div>
     `
@@ -156,7 +176,7 @@ export const renderSubjectOptions = (subjects: Subject[]) => {
 export const renderTasks = (tasks: Task[], subjects: Subject[]) => {
   if (!tasks.length) {
     dom.taskList.innerHTML =
-      "<div class=\"rounded-xl border border-dashed border-slate/30 p-6 text-center text-slate\">No hay tareas registradas.</div>";
+      "<div class=\"rounded-xl border border-dashed border-slate/30 p-6 text-center text-slate dark:text-gray-400\">No existen tareas registradas.</div>";
     return;
   }
 
@@ -166,22 +186,22 @@ export const renderTasks = (tasks: Task[], subjects: Subject[]) => {
     .map((task) => {
       const tone = task.status === "overdue" ? "border-red-400" : "border-slate/10";
       return `
-      <article class="rounded-2xl border ${tone} bg-mist/60 p-4 dark:bg-slate-800">
+      <article class="rounded-2xl border ${tone} bg-mist/60 p-4 dark:bg-gray-800 dark:border-gray-700">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 class="text-lg font-semibold">${task.title}</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-300">${subjectMap.get(task.subject_id ?? "") ?? "Sin asignatura"}</p>
+            <p class="text-sm text-slate-500 dark:text-gray-400">${subjectMap.get(task.subject_id ?? "") ?? "Sin asignatura"}</p>
           </div>
           <div class="flex flex-wrap gap-2 text-xs">
-            <span class="rounded-full bg-white px-3 py-1 dark:bg-slate-700">${labels.priority[task.priority]}</span>
-            <span class="rounded-full bg-white px-3 py-1 dark:bg-slate-700">${labels.status[task.status]}</span>
-            <span class="rounded-full bg-white px-3 py-1 dark:bg-slate-700">Entrega: ${task.due_date}</span>
+            <span class="rounded-full bg-white px-3 py-1 dark:bg-gray-700">${labels.priority[task.priority]}</span>
+            <span class="rounded-full bg-white px-3 py-1 dark:bg-gray-700">${labels.status[task.status]}</span>
+            <span class="rounded-full bg-white px-3 py-1 dark:bg-gray-700">Entrega: ${task.due_date}</span>
           </div>
         </div>
-        <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">${task.description ?? ""}</p>
+        <p class="mt-3 text-sm text-slate-600 dark:text-gray-300">${task.description ?? ""}</p>
         <div class="mt-4 flex gap-3">
-          <button data-action="edit" data-id="${task.id}" class="rounded-lg border border-slate/20 px-3 py-1 text-sm">Editar</button>
-          <button data-action="delete" data-id="${task.id}" class="rounded-lg bg-ink px-3 py-1 text-sm text-white">Eliminar</button>
+          <button data-action="edit" data-id="${task.id}" class="rounded-lg border border-slate/20 px-3 py-1 text-sm dark:border-gray-600">Editar</button>
+          <button data-action="delete" data-id="${task.id}" class="rounded-lg bg-ink px-3 py-1 text-sm text-white dark:bg-gray-700">Eliminar</button>
         </div>
       </article>
     `;

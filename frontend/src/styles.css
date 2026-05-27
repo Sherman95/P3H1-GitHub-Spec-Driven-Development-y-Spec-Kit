@@ -7,5 +7,5 @@ body {
 }
 
 .theme-bg {
-  @apply bg-mist text-ink dark:bg-slate-950 dark:text-gray-100;
+  @apply bg-mist text-ink dark:bg-gray-950 dark:text-gray-100;
 }

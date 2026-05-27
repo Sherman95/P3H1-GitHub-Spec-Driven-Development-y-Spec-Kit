@@ -132,11 +132,31 @@ Tasks
 ## Integrantes
 - AZUERO MALDONADO RONALD ALEJANDRO
 
-## Evidencia de ramas y pull requests
-- Crear ramas por fase (por ejemplo: feature/specs, feature/backend, feature/frontend).
-- Abrir pull requests en GitHub y documentar los merges en el historial.
-- Adjuntar el enlace del repositorio como evidencia.
+## Flujo GitHub y Ramas
 
+### Branching strategy
+Se utilizara la siguiente estrategia de ramas:
+- main
+- develop
+- feature/auth
+- feature/tasks
+- feature/subjects
+- feature/dashboard
+- feature/dark-mode
+- feature/frontend-ui
+- feature/task-filters
+
+### Conventional Commits
+Cada commit debe usar Conventional Commits:
+- `feat:` para nuevas caracteristicas
+- `fix:` para solucionar errores
+- `style:` para cambios de formato
+- `refactor:` para mejoras en el codigo
+- `docs:` para actualizacion de documentacion
+- `test:` para pruebas
+
+### Pull Requests
+Cada feature debe tener un PR con descripcion y evidencia de merge. Adjuntar el enlace del repositorio como evidencia.
 ## Capturas
 - Agregar capturas de login, dashboard, tareas y dark mode.
 

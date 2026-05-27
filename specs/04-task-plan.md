@@ -1,13 +1,15 @@
 # TaskCampus - Task Plan
 
-## Fases
-1. Actualizar specs segun ticket maestro.
-2. Definir arquitectura backend por capas.
-3. Implementar autenticacion JWT.
-4. Implementar CRUD de asignaturas.
-5. Implementar CRUD de tareas + filtros + overdue.
-6. Implementar resumen y dashboard.
-7. Implementar frontend UI, auth y dark mode.
-8. Probar flujos principales y offline.
-9. Documentar README profesional.
-10. Publicar evidencias en GitHub y deploy.
+## Fases de Desarrollo
+
+| Fase | Actividad |
+| --- | --- |
+| 1 | Crear repositorio en GitHub |
+| 2 | Definir la especificación funcional del sistema |
+| 3 | Crear el plan técnico de desarrollo |
+| 4 | Dividir el trabajo en tareas |
+| 5 | Implementar backend en Python |
+| 6 | Implementar frontend en TypeScript |
+| 7 | Probar funcionalidades |
+| 8 | Documentar instalación y uso |
+| 9 | Publicar evidencias en GitHub |
