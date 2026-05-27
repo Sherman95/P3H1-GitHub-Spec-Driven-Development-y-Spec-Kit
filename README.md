@@ -66,6 +66,25 @@ create table if not exists tasks (
 - Abrir pull requests en GitHub y documentar los merges en el historial.
 - Adjuntar el enlace del repositorio como evidencia.
 
+## Flujo Spec Kit (CLI)
+1. Instalar Specify CLI:
+   - uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@vX.Y.Z
+2. Inicializar proyecto:
+   - specify init taskcampus --integration copilot
+3. Crear principios del proyecto:
+   - /speckit.constitution
+4. Definir especificacion funcional:
+   - /speckit.specify
+5. Plan tecnico:
+   - /speckit.plan
+6. Plan de tareas:
+   - /speckit.tasks
+7. Implementacion:
+   - /speckit.implement
+8. (Opcional) Verificacion:
+   - /speckit.analyze
+   - /speckit.checklist
+
 ## Especificaciones
 - specs/01-product-spec.md
 - specs/02-ux-spec.md
